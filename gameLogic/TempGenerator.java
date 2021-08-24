@@ -80,6 +80,7 @@ public class TempGenerator {
         int height=scalarField[0].length-1;
         int depth=scalarField[0][0].length-1;
         float[] triangles=new float[45*width*height*depth];
+        int triangleCount=0;
         for(int x=0;x<width;x++){
             for(int y=0;y<height;y++){
                 for(int z=0;z<depth;z++){
@@ -135,63 +136,38 @@ public class TempGenerator {
                     }if((edgeIndex&2048)==2048){
                         edges[11]=interpolateEdge(new Vector3f(x,y,z+1),new Vector3f(x,y+1,z+1),values[3],values[7],isoLevel);//y
                     }
-                    float[] voxelTriangles=new float[45];
 
                     for(int i=0;indices[i]!=-1;i+=3){
                         Vector3f vertexA=edges[indices[i]];
                         Vector3f vertexB=edges[indices[i+1]];
                         Vector3f vertexC=edges[indices[i+2]];
 
-                        voxelTriangles[i * 3]=vertexA.x;
-                        voxelTriangles[i*3+1]=vertexA.y;
-                        voxelTriangles[i*3+2]=vertexA.z;
+                        triangles[triangleCount]=vertexA.x;
+                        triangles[triangleCount+1]=vertexA.y;
+                        triangles[triangleCount+2]=vertexA.z;
 
-                        voxelTriangles[i*3+3]=vertexB.x;
-                        voxelTriangles[i*3+4]=vertexB.y;
-                        voxelTriangles[i*3+5]=vertexB.z;
+                        triangles[triangleCount+3]=vertexB.x;
+                        triangles[triangleCount+4]=vertexB.y;
+                        triangles[triangleCount+5]=vertexB.z;
 
-                        voxelTriangles[i*3+6]=vertexC.x;
-                        voxelTriangles[i*3+7]=vertexC.y;
-                        voxelTriangles[i*3+8]=vertexC.z;
-                    }
+                        triangles[triangleCount+6]=vertexC.x;
+                        triangles[triangleCount+7]=vertexC.y;
+                        triangles[triangleCount+8]=vertexC.z;
 
-                    System.arraycopy(voxelTriangles, 0, triangles, invocId * 45, 45);
-                }
-            }
-        }
-        int totalTriangles=0;
-        int emptyTriangles=0;
-        for(int i=0;i<triangles.length;i+=9){
-            totalTriangles++;
-            if(triangles[i]==0&&triangles[i+1]==0&&triangles[i+2]==0){
-                if(triangles[i+3]==0&&triangles[i+4]==0&&triangles[i+5]==0){
-                    if(triangles[i+6]==0&&triangles[i+7]==0&&triangles[i+8]==0){
-                        emptyTriangles++;
+                        triangleCount+=9;
                     }
                 }
             }
         }
-        float[] cleanedTriangles=new float[9*totalTriangles-emptyTriangles];
-        int j=0;
 
-        for(int i=0;i<triangles.length;i+=9){
-            totalTriangles++;
-            if(!(triangles[i]==0&&triangles[i+1]==0&&triangles[i+2]==0
-                    &&triangles[i+3]==0&&triangles[i+4]==0&&triangles[i+5]==0
-                    &&triangles[i+6]==0&&triangles[i+7]==0&&triangles[i+8]==0)){
-                System.arraycopy(triangles,i,cleanedTriangles,j,9);
-                j+=9;
-            }
-        }
-
-        FloatBuffer verticesBuffer= MemoryUtil.memAllocFloat(cleanedTriangles.length);
-        verticesBuffer.put(cleanedTriangles).flip();
+        FloatBuffer verticesBuffer= MemoryUtil.memAllocFloat(triangleCount);
+        verticesBuffer.put(Arrays.copyOf(triangles,triangleCount)).flip();
 
         int vertexBuffer= GL46.glGenBuffers();
         GL46.glBindBuffer(GL46.GL_ARRAY_BUFFER,vertexBuffer);
         GL46.glBufferData(GL46.GL_ARRAY_BUFFER,verticesBuffer,GL46.GL_STATIC_DRAW);
 
-        Mesh mesh=new Mesh(vertexBuffer, cleanedTriangles.length);
+        Mesh mesh=new Mesh(vertexBuffer, triangleCount);
 
         MemoryUtil.memFree(verticesBuffer);
 
