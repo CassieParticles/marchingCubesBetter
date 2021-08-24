@@ -105,9 +105,9 @@ public class Main<TextureMesh> {
 				4,5,6, 4,6,7
 		};
 		System.out.println("Starting point generation");
-		int radius=60;
-		int noiseMagnitude=10;
-		float[][][] points=generator.scalarGenerator((radius+noiseMagnitude+2)*2,(radius+noiseMagnitude+2)*2,(radius+noiseMagnitude+2)*2,radius,noiseMagnitude);
+		int radius=120;
+		int noiseMagnitude=2;
+		float[][][] points=generator.scalarGenerator((radius+2)*2+noiseMagnitude,(radius+2)*2+noiseMagnitude,(radius+2)*2+noiseMagnitude,radius,noiseMagnitude);
 		System.out.println("Starting mesh generation");
 		mesh=generator.generate(points,0);
 		System.out.println("Mesh generated");
