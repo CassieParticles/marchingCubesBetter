@@ -77,7 +77,7 @@ public class Window {
         GL.createCapabilities();
         
         GL46.glEnable(GL46.GL_DEPTH_TEST);
-        GL46.glEnable(GL_CULL_FACE);
+//        GL46.glEnable(GL_CULL_FACE);
 
         // Set the clear color
         glClearColor(0.1f, 0.1f, 0.2f, 1.0f);

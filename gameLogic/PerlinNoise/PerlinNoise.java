@@ -1,19 +1,15 @@
-package gameLogic;
+package gameLogic.PerlinNoise;
 
 
 import org.joml.Vector3f;
 
 public class PerlinNoise {
 	
-	private PerlinChunks chunks;
+	private final PerlinChunks chunks;
+	private final int chunkSize;
 
-	private int chunkSize;
-
-	private float noiseValue;
-	
-	public PerlinNoise( int chunkSize, float noiseValue){
+	public PerlinNoise( int chunkSize){
 		this.chunkSize=chunkSize;
-		this.noiseValue=noiseValue;
 		
 		chunks=new PerlinChunks();
 	}
@@ -114,27 +110,5 @@ public class PerlinNoise {
 
 
 		return interpolate(valY0,valY1,xInternChunkPos);
-	}
-
-	public float genOctave(float x, float y, float z, int octaves, int persistance){
-		float val=0;
-		float maxVal=0;
-
-
-		return val;
-
-	}
-	
-	public float[][][] genChunk(int offsetX, int offsetY, int offsetZ){
-		float[][][] chunkValues=new float[chunkSize][chunkSize][chunkSize];
-		for(int x=0;x<chunkSize;x++){
-			for(int y=0;y<chunkSize;y++){
-				for(int z=0;z<chunkSize;z++){
-					float val=genPoint((x+offsetX)*noiseValue,(y+offsetY)*noiseValue,(z+offsetZ)*noiseValue);
-					chunkValues[x][y][z]=val;
-				}
-			}
-		}
-		return chunkValues;
 	}
 }

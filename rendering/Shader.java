@@ -3,9 +3,8 @@ package rendering;
 import org.lwjgl.opengl.GL46;
 
 public class Shader {
-    private int shaderType;
-
-    private int shaderId;
+    private final int shaderType;
+    private final int shaderId;
 
     public Shader(String shaderCode, int shaderType) throws Exception {
         shaderId = GL46.glCreateShader(shaderType);

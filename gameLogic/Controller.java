@@ -5,8 +5,6 @@ import org.lwjgl.glfw.GLFW;
 import utils.Input;
 import utils.Timer;
 
-import java.beans.VetoableChangeListener;
-
 public class Controller {
     protected Vector3f position;
     protected Vector3f rotation;

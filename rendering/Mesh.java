@@ -11,18 +11,17 @@ import java.nio.IntBuffer;
 
 public class Mesh {
 
-    private int vaoId;
+    private final int vaoId;
 
-    private int vertexVboId;
-    private int indexVboId;
+    private final int vertexVboId;
+    private final int indexVboId;
 
-    private int vertexCount;
+    private final int vertexCount;
 
     public Mesh(int vertexBuffer,  int vertexCount){
         this.vertexCount=vertexCount;
         vertexVboId=vertexBuffer;
-
-        System.out.println(vertexCount/3);
+        indexVboId=0;
 
         vaoId=GL46.glGenVertexArrays();
         GL46.glBindVertexArray(vaoId);
@@ -70,8 +69,6 @@ public class Mesh {
     }
 
     public void render(Program program, Camera camera){
-        program.useProgram();
-
         GL46.glBindVertexArray(getVaoId());
         GL46.glEnableVertexAttribArray(0);
 
@@ -88,10 +85,7 @@ public class Mesh {
 
         GL46.glDisableVertexAttribArray(0);
         GL46.glBindVertexArray(0);
-
-        program.unlinkProgram();
     }
-
 
     public void cleanup(){
         GL46.glDisableVertexAttribArray(0);

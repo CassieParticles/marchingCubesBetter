@@ -14,13 +14,12 @@ import org.lwjgl.opengl.GL46;
 import org.lwjgl.system.MemoryStack;
 
 public class Program {
-    private int programId;
+    private final int programId;
 
-    private ArrayList<Shader> shaders;
-
-    public String programName;
-
+    private final ArrayList<Shader> shaders;
     private final Map<String,Integer> uniforms;
+
+    public final String programName;
 
     public Program(String name) throws Exception{
         this.programName=name;

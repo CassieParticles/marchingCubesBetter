@@ -40,7 +40,7 @@ public class TriangulationTable {
                 0xf00, 0xe09, 0xd03, 0xc0a, 0xb06, 0xa0f, 0x905, 0x80c,
                 0x70c, 0x605, 0x50f, 0x406, 0x30a, 0x203, 0x109, 0x0   };
 
-    int[][] triTable=new int[][]{
+    private final int[][] triTable=new int[][]{
             {0xffffffff,0xffffffff},{0x83fffff,0xffffffff},
             {0x19fffff,0xffffffff},{0x183981ff,0xffffffff},
             {0x12afffff,0xffffffff},{0x8312aff,0xffffffff},
@@ -192,5 +192,4 @@ public class TriangulationTable {
         }
         return triangles;
     }
-
 }
