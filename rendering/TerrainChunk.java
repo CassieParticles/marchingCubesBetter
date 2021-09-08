@@ -2,45 +2,26 @@ package rendering;
 
 import gameLogic.Camera;
 import gameLogic.Generator;
-import org.joml.Vector3f;
+import org.joml.Vector3i;
 
 public class TerrainChunk {
-    private final Vector3f offset;
+    private final Vector3i offset;
     private final Generator generator;
+    private final int size;
 
-    private float[][][] scalarField;
     private Mesh mesh;
 
-    public TerrainChunk(Vector3f offset, Mesh mesh,Generator generator){
+    public TerrainChunk(Vector3i offset, Generator generator, int size){
         this.offset=offset;
         this.generator=generator;
-        this.mesh=mesh;
+        this.size=size;
     }
 
-    public TerrainChunk(Vector3f offset, float[][][] scalarField, Generator generator){
-        this.offset=offset;
-        this.scalarField=scalarField;
-        this.generator=generator;
-        reCalcMesh();
-    }
-
-    public void setScalars(float[][][] scalarField){
-        this.scalarField=scalarField;
-    }
-
-    public float[][][] getScalars(){
-        return scalarField;
-    }
-
-    public void reCalcMesh(){
+    public void calcMesh(float[][][] newValues){
         if(mesh!=null){
             mesh.cleanup();
         }
-        mesh=generator.calcMesh(scalarField);
-    }
-
-    public void changeOffset(Vector3f newOffset){
-        offset.set(newOffset);
+        mesh=generator.calcMesh(newValues,offset,size-1);
     }
 
     public void render(Program program, Camera camera){

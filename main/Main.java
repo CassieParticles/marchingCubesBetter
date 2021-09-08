@@ -25,9 +25,9 @@ public class Main<TextureMesh> {
 	private TerrainChunk[] chunks;
 
 	private int radius=120;
-	private int noiseMagnitude=15;
-	private float noiseFrequency=0.83f;
-	private int chunkSize=10;
+	private int noiseMagnitude=50;
+	private float noiseFrequency=0.31f;
+	private int chunkSize=20;
 
 	private Window window;
 
@@ -73,7 +73,7 @@ public class Main<TextureMesh> {
 		renderProgram.createUniform("cameraPos");
 		renderProgram.createUniform("translation");
 
-		chunks= generator.generateTerrain((radius+2)*2+noiseMagnitude,chunkSize,radius,noiseFrequency,noiseMagnitude);
+		chunks= generator.generateNewTerrainChunks((radius+2)*2+noiseMagnitude,chunkSize,radius,noiseFrequency,noiseMagnitude);
 
 		GL46.glClearColor(0.1f, 0.1f, 0.2f, 1.0f);
 		
@@ -95,7 +95,7 @@ public class Main<TextureMesh> {
 		window.loop();
 		GL46.glClear(GL46.GL_COLOR_BUFFER_BIT | GL46.GL_DEPTH_BUFFER_BIT);
 		renderProgram.useProgram();
-		for(TerrainChunk chunk:chunks){
+		for(TerrainChunk chunk: chunks){
 			chunk.render(renderProgram,camera);
 		}
 	}
@@ -113,7 +113,7 @@ public class Main<TextureMesh> {
 	
 	private void cleanup(){
 		window.cleanup();
-		for(TerrainChunk chunk:chunks){
+		for(TerrainChunk chunk: chunks){
 			chunk.cleanup();
 		}
 		renderProgram.cleanup();
