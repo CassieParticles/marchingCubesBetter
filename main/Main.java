@@ -1,7 +1,7 @@
 package main;
 
 import gameLogic.Camera;
-import gameLogic.Generator;
+import gameLogic.Terrain;
 import org.joml.Vector3f;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.opengl.GL46;
@@ -20,9 +20,7 @@ public class Main<TextureMesh> {
 
 	private Program renderProgram;
 
-	private Generator generator;
-
-	private TerrainChunk[] chunks;
+	private Terrain terrainHandler;
 
 	private int radius=120;
 	private int noiseMagnitude=50;
@@ -55,7 +53,7 @@ public class Main<TextureMesh> {
 		window.init();
 		input.init(window);
 		camera.calculateProjectionMatrix((float)Math.toRadians(60),0.1f,1000f,window.getAspectRatio());
-		generator =new Generator();
+		terrainHandler=new Terrain();
 
 		camera.rotate(new Vector3f(-30,90,0));
 
@@ -73,7 +71,7 @@ public class Main<TextureMesh> {
 		renderProgram.createUniform("cameraPos");
 		renderProgram.createUniform("translation");
 
-		chunks= generator.generateNewTerrainChunks((radius+2)*2+noiseMagnitude,chunkSize,radius,noiseFrequency,noiseMagnitude);
+		terrainHandler.generate();
 
 		GL46.glClearColor(0.1f, 0.1f, 0.2f, 1.0f);
 		
@@ -95,7 +93,7 @@ public class Main<TextureMesh> {
 		window.loop();
 		GL46.glClear(GL46.GL_COLOR_BUFFER_BIT | GL46.GL_DEPTH_BUFFER_BIT);
 		renderProgram.useProgram();
-		for(TerrainChunk chunk: chunks){
+		for(TerrainChunk chunk: terrainHandler.getChunks()){
 			chunk.render(renderProgram,camera);
 		}
 	}
@@ -104,16 +102,20 @@ public class Main<TextureMesh> {
 
 		if(input.isKeyDown(GLFW.GLFW_KEY_ESCAPE)){
     		window.close();
-    	}if(input.isKeyPressed(GLFW.GLFW_KEY_SPACE)){
-			System.out.println("Gameing");
-		}
+    	}if(input.isKeyDown(GLFW.GLFW_KEY_LEFT_CONTROL)){
+			terrainHandler.addFloat((int)camera.getPosition().x,(int)camera.getPosition().y,(int)camera.getPosition().z,1f);
+			terrainHandler.reCalcMesh(terrainHandler.findChunkIdFromCoord(camera.getPosition()));
+		}if(input.isKeyDown(GLFW.GLFW_KEY_LEFT_SHIFT)){
+		terrainHandler.addFloat((int)camera.getPosition().x,(int)camera.getPosition().y,(int)camera.getPosition().z,-1f);
+		terrainHandler.reCalcMesh(terrainHandler.findChunkIdFromCoord(camera.getPosition()));
+	}
 		camera.control(input,timer);
 		input.updateInputs();
 	}
 	
 	private void cleanup(){
 		window.cleanup();
-		for(TerrainChunk chunk: chunks){
+		for(TerrainChunk chunk: terrainHandler.getChunks()){
 			chunk.cleanup();
 		}
 		renderProgram.cleanup();

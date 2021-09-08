@@ -30,7 +30,7 @@ public class Generator {
         return (radius-distFromOrigin)+(noise.genPoint((x-size)*noiseFrequency,(y-size)*noiseFrequency,(z-size)*noiseFrequency)-0.95f)*noiseMagnitude;
     }
 
-    private float[][][] genScalarField(int size, int radius, float noiseFrequency, float noiseMagnitude){
+    public float[][][] genScalarField(int size, int radius, float noiseFrequency, float noiseMagnitude){
         float[][][] field=new float[size+1][size+1][size+1];
         for(int x=0;x<=size;x++){
             for(int y=0;y<=size;y++){
@@ -42,12 +42,16 @@ public class Generator {
         return field;
     }
 
-    public TerrainChunk[] generateNewTerrainChunks(int size, int chunkSize, int radius, float noiseFrequency, float noiseMagnitude){
+    public TerrainChunk[] generateTerrainChunks(int size, int chunkSize, int radius, float noiseFrequency, float noiseMagnitude){
+        int chunksNumber=(int)Math.ceil((float)size/chunkSize);
+        float[][][] scalarField=genScalarField(chunksNumber*chunkSize, radius, noiseFrequency, noiseMagnitude);
+        return generateTerrainChunks(scalarField,chunkSize);
+    }
+    public TerrainChunk[] generateTerrainChunks(float[][][] scalarField, int chunkSize){
+        int size= scalarField.length-1;
         int chunksNumber=(int)Math.ceil((float)size/chunkSize);
         TerrainChunk[] chunks=new TerrainChunk[chunksNumber*chunksNumber*chunksNumber];
-        int c=chunksNumber/2;
         int count=0;
-        float[][][] scalarField=genScalarField(chunksNumber*chunkSize, radius, noiseFrequency, noiseMagnitude);
         for(int x=0;x<chunksNumber;x++){
             for(int y=0;y<chunksNumber;y++){
                 for(int z=0;z<chunksNumber;z++){
