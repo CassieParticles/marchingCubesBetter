@@ -16,5 +16,5 @@ float calcLighting(){
 
 void main() {
     vec3 colour=(normal+vec3(1,1,1))/2;
-    FragColour=vec4(calcLighting()*normal,1);
+    FragColour=vec4(calcLighting()*colour,1);
 }

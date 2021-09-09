@@ -2,6 +2,7 @@ package main;
 
 import gameLogic.Camera;
 import gameLogic.Terrain;
+import gameLogic.TerrainModifier;
 import org.joml.Vector3f;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.opengl.GL46;
@@ -12,7 +13,7 @@ import utils.FileHandling;
 import utils.Input;
 import utils.Timer;
 
-public class Main<TextureMesh> {
+public class Main {
 	
 	private Timer timer;
 	private Input input;
@@ -21,6 +22,7 @@ public class Main<TextureMesh> {
 	private Program renderProgram;
 
 	private Terrain terrainHandler;
+	private TerrainModifier terrainModifier;
 
 	private int radius=120;
 	private int noiseMagnitude=50;
@@ -30,6 +32,9 @@ public class Main<TextureMesh> {
 	private Window window;
 
 	public static void main(String[] args){
+//		for(int i=0;i<20000;i++){
+//			System.out.print("M");
+//		}
 		new Main().gameLoop();
 	}
 	
@@ -54,6 +59,8 @@ public class Main<TextureMesh> {
 		input.init(window);
 		camera.calculateProjectionMatrix((float)Math.toRadians(60),0.1f,1000f,window.getAspectRatio());
 		terrainHandler=new Terrain();
+		terrainModifier=new TerrainModifier(terrainHandler);
+
 
 		camera.rotate(new Vector3f(-30,90,0));
 
@@ -103,11 +110,13 @@ public class Main<TextureMesh> {
 		if(input.isKeyDown(GLFW.GLFW_KEY_ESCAPE)){
     		window.close();
     	}if(input.isKeyDown(GLFW.GLFW_KEY_LEFT_CONTROL)){
-			terrainHandler.addFloat((int)camera.getPosition().x,(int)camera.getPosition().y,(int)camera.getPosition().z,1f);
-			terrainHandler.reCalcMesh(terrainHandler.findChunkIdFromCoord(camera.getPosition()));
+			terrainModifier.addCircleArea((int)camera.getPosition().x,(int)camera.getPosition().y,(int)camera.getPosition().z,5,chunkSize,1f);
+//			terrainHandler.addFloat((int)camera.getPosition().x,(int)camera.getPosition().y,(int)camera.getPosition().z,1f);
+//			terrainHandler.reCalcMesh(terrainHandler.findChunkIdFromCoord(camera.getPosition()));
 		}if(input.isKeyDown(GLFW.GLFW_KEY_LEFT_SHIFT)){
-		terrainHandler.addFloat((int)camera.getPosition().x,(int)camera.getPosition().y,(int)camera.getPosition().z,-1f);
-		terrainHandler.reCalcMesh(terrainHandler.findChunkIdFromCoord(camera.getPosition()));
+			terrainModifier.addCircleArea((int)camera.getPosition().x,(int)camera.getPosition().y,(int)camera.getPosition().z,5,chunkSize,-1f);
+//		terrainHandler.addFloat((int)camera.getPosition().x,(int)camera.getPosition().y,(int)camera.getPosition().z,-1f);
+//		terrainHandler.reCalcMesh(terrainHandler.findChunkIdFromCoord(camera.getPosition()));
 	}
 		camera.control(input,timer);
 		input.updateInputs();

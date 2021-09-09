@@ -26,7 +26,6 @@ public class Generator {
 
     private float generateScalar(float x, float y, float z,int size, int radius, float noiseFrequency, float noiseMagnitude){
         float distFromOrigin=(float)Math.sqrt(Math.abs(square(x-radius)+square(y-radius)+square(z-radius)));
-
         return (radius-distFromOrigin)+(noise.genPoint((x-size)*noiseFrequency,(y-size)*noiseFrequency,(z-size)*noiseFrequency)-0.95f)*noiseMagnitude;
     }
 
