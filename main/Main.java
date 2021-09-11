@@ -24,17 +24,9 @@ public class Main {
 	private Terrain terrainHandler;
 	private TerrainModifier terrainModifier;
 
-	private int radius=120;
-	private int noiseMagnitude=50;
-	private float noiseFrequency=0.31f;
-	private int chunkSize=20;
-
 	private Window window;
 
 	public static void main(String[] args){
-//		for(int i=0;i<20000;i++){
-//			System.out.print("M");
-//		}
 		new Main().gameLoop();
 	}
 	
@@ -110,13 +102,9 @@ public class Main {
 		if(input.isKeyDown(GLFW.GLFW_KEY_ESCAPE)){
     		window.close();
     	}if(input.isKeyDown(GLFW.GLFW_KEY_LEFT_CONTROL)){
-			terrainModifier.addCircleArea((int)camera.getPosition().x,(int)camera.getPosition().y,(int)camera.getPosition().z,5,chunkSize,1f);
-//			terrainHandler.addFloat((int)camera.getPosition().x,(int)camera.getPosition().y,(int)camera.getPosition().z,1f);
-//			terrainHandler.reCalcMesh(terrainHandler.findChunkIdFromCoord(camera.getPosition()));
+			terrainModifier.addCircleArea((int)camera.getPosition().x,(int)camera.getPosition().y,(int)camera.getPosition().z,5,1f*(float)timer.getDeltaUpdate());
 		}if(input.isKeyDown(GLFW.GLFW_KEY_LEFT_SHIFT)){
-			terrainModifier.addCircleArea((int)camera.getPosition().x,(int)camera.getPosition().y,(int)camera.getPosition().z,5,chunkSize,-1f);
-//		terrainHandler.addFloat((int)camera.getPosition().x,(int)camera.getPosition().y,(int)camera.getPosition().z,-1f);
-//		terrainHandler.reCalcMesh(terrainHandler.findChunkIdFromCoord(camera.getPosition()));
+			terrainModifier.addCircleArea((int)camera.getPosition().x,(int)camera.getPosition().y,(int)camera.getPosition().z,5,-1f*(float)timer.getDeltaUpdate());
 	}
 		camera.control(input,timer);
 		input.updateInputs();

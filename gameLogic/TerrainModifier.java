@@ -12,7 +12,8 @@ public class TerrainModifier {
         return a*a;
     }
 
-    public void addCircleArea(int x, int y, int z, int r,int chunkSize, float opacity){
+    public void addCircleArea(int x, int y, int z, int r, float opacity){
+        int chunkSize=terrain.getChunkSize();
         for(int localX=-r;localX<=r;localX++){
             for(int localY=-r;localY<=r;localY++){
                 for(int localZ=-r;localZ<=r;localZ++){
@@ -27,6 +28,9 @@ public class TerrainModifier {
         for(int chunkX=-chunkSize;chunkX<=chunkSize;chunkX+=chunkSize){
             for(int chunkY=-chunkSize;chunkY<=chunkSize;chunkY+=chunkSize){
                 for(int chunkZ=-chunkSize;chunkZ<=chunkSize;chunkZ+=chunkSize){
+//                    if((x/chunkSize)*chunkSize){
+//
+//                    }
                     terrain.reCalcMesh(terrain.findChunkIdFromCoord(new Vector3f(chunkX+x,chunkY+y,chunkZ+z))); //Not calculating all relevant chunks
                 }
             }
