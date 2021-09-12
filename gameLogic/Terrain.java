@@ -12,7 +12,7 @@ public class Terrain {
     private int numberOfChunks;
 
     private int radius=120;
-    private float noiseMagnitude=0.1f;
+    private float noiseMagnitude=0.25f;
     private float noiseFrequency=0.31f;
     private int chunkSize=20;
 
@@ -21,7 +21,7 @@ public class Terrain {
     }
 
     public void generate(){
-        size=(radius+2)*3;
+        size=(int)(radius*2*(1+noiseMagnitude));
         numberOfChunks=(int)Math.ceil((float)size/chunkSize);
         scalarField=generator.genScalarField(numberOfChunks*chunkSize,radius,noiseFrequency,noiseMagnitude);
         chunks=generator.generateTerrainChunks(scalarField,chunkSize);
