@@ -12,7 +12,7 @@ public class Terrain {
     private int numberOfChunks;
 
     private int radius=120;
-    private float noiseMagnitude=0.25f;
+    private float noiseMagnitude=0.2f;
     private float noiseFrequency=0.31f;
     private int chunkSize=20;
 
@@ -57,7 +57,6 @@ public class Terrain {
     public int findChunkIdFromCoord(Vector3f coordinate){
         Vector3i intCoord=new Vector3i((int)coordinate.x/chunkSize,(int)coordinate.y/chunkSize,(int)coordinate.z/chunkSize);
         int coord=(intCoord.x*numberOfChunks+intCoord.y)*numberOfChunks+intCoord.z;
-        System.out.println(coord);
         if(coord<chunks.length&&coord>0){
             return coord;
         }else{

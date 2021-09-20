@@ -102,9 +102,9 @@ public class Main {
 		if(input.isKeyDown(GLFW.GLFW_KEY_ESCAPE)){
     		window.close();
     	}if(input.isKeyDown(GLFW.GLFW_KEY_LEFT_CONTROL)){
-			terrainModifier.addCircleArea((int)camera.getPosition().x,(int)camera.getPosition().y,(int)camera.getPosition().z,5,1f*(float)timer.getDeltaUpdate());
+			terrainModifier.addCircleArea((int)camera.getPosition().x,(int)camera.getPosition().y,(int)camera.getPosition().z,10,1f*(float)timer.getDeltaUpdate());
 		}if(input.isKeyDown(GLFW.GLFW_KEY_LEFT_SHIFT)){
-			terrainModifier.addCircleArea((int)camera.getPosition().x,(int)camera.getPosition().y,(int)camera.getPosition().z,5,-1f*(float)timer.getDeltaUpdate());
+			terrainModifier.addCircleArea((int)camera.getPosition().x,(int)camera.getPosition().y,(int)camera.getPosition().z,10,-1f*(float)timer.getDeltaUpdate());
 	}
 		camera.control(input,timer);
 		input.updateInputs();

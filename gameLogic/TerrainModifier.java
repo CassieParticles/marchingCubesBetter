@@ -20,18 +20,16 @@ public class TerrainModifier {
                     float distSqr=square(localX)+square(localY)+square(localZ);
                     float dist=distSqr<0?0:(float)Math.sqrt(distSqr);
                     float paint=Math.max(r-dist,0)*opacity;
-                    System.out.println(paint);
                     terrain.addFloat(localX+x,localY+y,localZ+z,paint);
                 }
             }
         }
-        for(int chunkX=-chunkSize;chunkX<=chunkSize;chunkX+=chunkSize){
-            for(int chunkY=-chunkSize;chunkY<=chunkSize;chunkY+=chunkSize){
-                for(int chunkZ=-chunkSize;chunkZ<=chunkSize;chunkZ+=chunkSize){
-//                    if((x/chunkSize)*chunkSize){
-//
-//                    }
-                    terrain.reCalcMesh(terrain.findChunkIdFromCoord(new Vector3f(chunkX+x,chunkY+y,chunkZ+z))); //Not calculating all relevant chunks
+        int count=0;
+        for(int chunkX=x-r;chunkX<=x+r+chunkSize;chunkX+=chunkSize){
+            for(int chunkY=y-r;chunkY<=y+r+chunkSize;chunkY+=chunkSize){
+                for(int chunkZ=z-r;chunkZ<=z+r+chunkSize;chunkZ+=chunkSize){
+                    terrain.reCalcMesh(terrain.findChunkIdFromCoord(new Vector3f(chunkX,chunkY,chunkZ)));
+                    count++;
                 }
             }
         }
