@@ -1,9 +1,5 @@
 package gameLogic;
 
-import org.joml.Vector3f;
-
-import java.util.Arrays;
-
 public class TriangulationTable {
 
     private final int[] edgeTable=new int[]{

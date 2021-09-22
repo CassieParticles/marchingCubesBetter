@@ -19,7 +19,7 @@ public class TerrainModifier {
                 for(int localZ=-r;localZ<=r;localZ++){
                     float distSqr=square(localX)+square(localY)+square(localZ);
                     float dist=distSqr<0?0:(float)Math.sqrt(distSqr);
-                    float paint=Math.max(r-dist,0)*opacity;
+                    float paint=Math.max((float)(r-dist)/r,0)*opacity;
                     terrain.addFloat(localX+x,localY+y,localZ+z,paint);
                 }
             }
