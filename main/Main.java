@@ -6,7 +6,9 @@ import gameLogic.TerrainModifier;
 import org.joml.Vector3f;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.opengl.GL46;
-import rendering.*;
+import rendering.Program;
+import rendering.Shader;
+import rendering.TerrainChunk;
 import utils.FileHandling;
 import utils.Input;
 import utils.Timer;
@@ -18,12 +20,10 @@ public class Main {
 	private Camera camera;
 
 	private Program renderProgram;
-	private Program stencilProgram;
 
 	private Terrain terrainHandler;
 	private TerrainModifier terrainModifier;
-	private Mesh square;
-
+	
 	private int penSize=10;
 
 	private Window window;
@@ -55,34 +55,16 @@ public class Main {
 		terrainHandler=new Terrain();
 		terrainModifier=new TerrainModifier(terrainHandler);
 
+
 		camera.rotate(new Vector3f(-30,90,0));
 
-		float[] vertices=new float[]{
-				-0.5f,0.5f,0,
-				0.5f,0.5f,0,
-				0.5f,-0.5f,0,
-				-0.5f,-0.5f,0};
-		int[] indices=new int[]{
-				0,1,2,
-				0,2,3};
-
-		square=new Mesh(vertices,indices);
-
-		renderProgram=new Program("Render");
+		renderProgram=new Program();
 		renderProgram.attachShaders(new Shader[]{
-				new Shader(FileHandling.loadResource("src/shaders/terrain/vertex.glsl"),GL46.GL_VERTEX_SHADER),
-				new Shader(FileHandling.loadResource("src/shaders/terrain/geometry.glsl"),GL46.GL_GEOMETRY_SHADER),
-				new Shader(FileHandling.loadResource("src/shaders/terrain/fragment.glsl"),GL46.GL_FRAGMENT_SHADER)
+				new Shader(FileHandling.loadResource("src/shaders/rendering/vertex.glsl"),GL46.GL_VERTEX_SHADER),
+				new Shader(FileHandling.loadResource("src/shaders/rendering/geometry.glsl"),GL46.GL_GEOMETRY_SHADER),
+				new Shader(FileHandling.loadResource("src/shaders/rendering/fragment.glsl"),GL46.GL_FRAGMENT_SHADER)
 		});
 		renderProgram.link();
-
-		stencilProgram=new Program("Stencil");
-		stencilProgram.attachShaders(new Shader[]{
-				new Shader(FileHandling.loadResource("src/shaders/screen/vertex.glsl"),GL46.GL_VERTEX_SHADER),
-				new Shader(FileHandling.loadResource("src/shaders/screen/fragment.glsl"),GL46.GL_FRAGMENT_SHADER)
-		});
-
-		stencilProgram.link();
 
 		renderProgram.createUniform("projectionMatrix");
 		renderProgram.createUniform("viewMatrix");
@@ -110,15 +92,11 @@ public class Main {
 	
 	private void render(){
 		window.loop();
-		GL46.glClear(GL46.GL_COLOR_BUFFER_BIT | GL46.GL_DEPTH_BUFFER_BIT );
-//		renderProgram.useProgram();
-//		for(TerrainChunk chunk: terrainHandler.getChunks()){
-//			chunk.render(renderProgram,camera);
-//		}
-//		renderProgram.unlinkProgram();
-		stencilProgram.useProgram();
-		square.render(stencilProgram,camera);
-		stencilProgram.detachProgram();
+		GL46.glClear(GL46.GL_COLOR_BUFFER_BIT | GL46.GL_DEPTH_BUFFER_BIT);
+		renderProgram.useProgram();
+		for(TerrainChunk chunk: terrainHandler.getChunks()){
+			chunk.render(renderProgram,camera);
+		}
 	}
 	
 	private void update(){
@@ -145,8 +123,6 @@ public class Main {
 		for(TerrainChunk chunk: terrainHandler.getChunks()){
 			chunk.cleanup();
 		}
-		square.cleanup();
 		renderProgram.cleanup();
-		stencilProgram.cleanup();
 	}
 }

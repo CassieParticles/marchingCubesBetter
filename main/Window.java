@@ -1,15 +1,17 @@
 package main;
 
+import static org.lwjgl.glfw.Callbacks.*;
+import static org.lwjgl.glfw.GLFW.*;
+import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.system.MemoryUtil.NULL;
+
+import java.awt.Dimension;
+import java.awt.Toolkit;
+
+import org.lwjgl.glfw.GLFW;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.opengl.GL;
 import org.lwjgl.opengl.GL46;
-
-import java.awt.*;
-
-import static org.lwjgl.glfw.Callbacks.glfwFreeCallbacks;
-import static org.lwjgl.glfw.GLFW.*;
-import static org.lwjgl.opengl.GL11.glClearColor;
-import static org.lwjgl.system.MemoryUtil.NULL;
 
 public class Window {
     private long windowHandle;
@@ -76,7 +78,6 @@ public class Window {
         
         GL46.glEnable(GL46.GL_DEPTH_TEST);
 //        GL46.glEnable(GL_CULL_FACE);
-//        GL46.glEnable(GL46.GL_STENCIL_TEST);
 
         // Set the clear color
         glClearColor(0.1f, 0.1f, 0.2f, 1.0f);
