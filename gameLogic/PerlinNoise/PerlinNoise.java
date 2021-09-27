@@ -108,7 +108,6 @@ public class PerlinNoise {
 		float valZ3=interpolate(n6,n7,zInternChunkPos);
 		float valY1=interpolate(valZ2,valZ3,yInternChunkPos);
 
-
 		return interpolate(valY0,valY1,xInternChunkPos);
 	}
 }
