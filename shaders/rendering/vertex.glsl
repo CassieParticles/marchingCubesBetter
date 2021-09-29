@@ -12,5 +12,4 @@ void main() {
     transformedPos=position+translation;
 
     gl_Position=projectionMatrix*viewMatrix*vec4(position+translation,1);
-
 }

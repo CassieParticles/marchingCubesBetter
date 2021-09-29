@@ -23,6 +23,10 @@ public class TerrainChunk {
         }
         mesh=generator.calcMesh(newValues,offset,size-1);
     }
+    
+    public int getTriangleCount() {
+    	return mesh.getVertexCount()/9;
+    }
 
     public void render(Program program, Camera camera){
         program.setUniform("translation",offset);

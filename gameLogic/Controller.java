@@ -18,21 +18,30 @@ public class Controller {
         this.moveSpeed=moveSpeed;
         this.rotateSpeed=rotateSpeed;
     }
+    
+    private float findSignedVolume(Vector3f a, Vector3f b, Vector3f c, Vector3f d) {
+    	return (1f/6)*new Vector3f(b).sub(a).cross(new Vector3f(c).sub(a)).dot(new Vector3f(d).sub(a));
+    }
+    
+    private boolean linePasses(Vector3f lineStart, Vector3f lineEnd, Vector3f triangleA, Vector3f triangleB, Vector3f triangleC) {
+    	return true;
+    }
 
     public void control(Input input, Timer timer){
         float deltaUpdate=(float)timer.getDeltaUpdate();
+        Vector3f translationVector=new Vector3f();
         if(input.isKeyDown(GLFW.GLFW_KEY_W)){
-            move(new Vector3f(0,0,-deltaUpdate*moveSpeed));
+            move(new Vector3f(0,0,-deltaUpdate*moveSpeed),translationVector);
         }else if(input.isKeyDown(GLFW.GLFW_KEY_S)){
-            move(new Vector3f(0,0,deltaUpdate*moveSpeed));
+            move(new Vector3f(0,0,deltaUpdate*moveSpeed),translationVector);
         }if(input.isKeyDown(GLFW.GLFW_KEY_A)){
-            move(new Vector3f(-deltaUpdate*moveSpeed,0,0));
+            move(new Vector3f(-deltaUpdate*moveSpeed,0,0),translationVector);
         }else if(input.isKeyDown(GLFW.GLFW_KEY_D)){
-            move(new Vector3f(deltaUpdate*moveSpeed,0,0));
+            move(new Vector3f(deltaUpdate*moveSpeed,0,0),translationVector);
         }if(input.isKeyDown(GLFW.GLFW_KEY_Q)){
-            move(new Vector3f(0,deltaUpdate*moveSpeed,0));
+            move(new Vector3f(0,deltaUpdate*moveSpeed,0),translationVector);
         }else if(input.isKeyDown(GLFW.GLFW_KEY_E)){
-            move(new Vector3f(0,-deltaUpdate*moveSpeed,0));
+            move(new Vector3f(0,-deltaUpdate*moveSpeed,0),translationVector);
         }
         if(input.isKeyDown(GLFW.GLFW_KEY_LEFT)){
             rotate(new Vector3f(0,-deltaUpdate*rotateSpeed,0));
@@ -44,18 +53,19 @@ public class Controller {
         }else if(input.isKeyDown(GLFW.GLFW_KEY_DOWN)){
             rotate(new Vector3f(deltaUpdate*rotateSpeed,0,0));
         }
+        position.add(translationVector); 
     }
 
-    public void move(Vector3f translation){
+    public void move(Vector3f translation, Vector3f translationVector){
         if ( translation.z != 0 ) {
-            position.x += (float)Math.sin(Math.toRadians(rotation.y)) * -1.0f * translation.z;
-            position.z += (float)Math.cos(Math.toRadians(rotation.y)) * translation.z;
+        	translationVector.x += (float)Math.sin(Math.toRadians(rotation.y)) * -1.0f * translation.z;
+        	translationVector.z += (float)Math.cos(Math.toRadians(rotation.y)) * translation.z;
         }
         if ( translation.x != 0) {
-            position.x += (float)Math.sin(Math.toRadians(rotation.y-90)) * -1.0f * translation.x;
-            position.z += (float)Math.cos(Math.toRadians(rotation.y-90)) * translation.x;
+        	translationVector.x += (float)Math.sin(Math.toRadians(rotation.y-90)) * -1.0f * translation.x;
+        	translationVector.z += (float)Math.cos(Math.toRadians(rotation.y-90)) * translation.x;
         }
-        position.y += translation.y;
+        translationVector.y += translation.y;
     }
 
     public void rotate(Vector3f rotation){

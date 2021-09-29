@@ -11,10 +11,10 @@ public class Terrain {
     private int size;
     private int numberOfChunks;
 
-    private int radius=120;
+    private int radius=80;
     private float noiseMagnitude=0.02f;
     private float noiseFrequency=0.31f;
-    private int chunkSize=20;
+    private int chunkSize=15;
 
     public Terrain(){
         this.generator=new Generator();

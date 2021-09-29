@@ -3,9 +3,14 @@ package main;
 import gameLogic.Camera;
 import gameLogic.Terrain;
 import gameLogic.TerrainModifier;
+
+import static org.lwjgl.opengl.GL11.GL_CULL_FACE;
+
 import org.joml.Vector3f;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.opengl.GL46;
+
+import rendering.Mesh2D;
 import rendering.Program;
 import rendering.Shader;
 import rendering.TerrainChunk;
@@ -18,15 +23,18 @@ public class Main {
 	private Timer timer;
 	private Input input;
 	private Camera camera;
+	private Window window;
 
 	private Program renderProgram;
+	private Program solidColourProgram;
+	private Program stencilProgram;
 
 	private Terrain terrainHandler;
 	private TerrainModifier terrainModifier;
 	
+	private Mesh2D square;
+	
 	private int penSize=10;
-
-	private Window window;
 
 	public static void main(String[] args){
 		new Main().gameLoop();
@@ -55,8 +63,21 @@ public class Main {
 		terrainHandler=new Terrain();
 		terrainModifier=new TerrainModifier(terrainHandler);
 
-
 		camera.rotate(new Vector3f(-30,90,0));
+		
+		float[] vertices=new float[]{
+				-1f,1f,
+				1f,1f,
+				1f,-1f,
+				-1f,-1f
+		};
+		
+		int[] indices=new int[]{
+				0,1,2,
+				0,2,3
+		};
+		
+		square=new Mesh2D(vertices,indices);
 
 		renderProgram=new Program();
 		renderProgram.attachShaders(new Shader[]{
@@ -65,12 +86,37 @@ public class Main {
 				new Shader(FileHandling.loadResource("src/shaders/rendering/fragment.glsl"),GL46.GL_FRAGMENT_SHADER)
 		});
 		renderProgram.link();
+		
+		solidColourProgram=new Program();
+		solidColourProgram.attachShaders(new Shader[]{
+				new Shader(FileHandling.loadResource("src/shaders/rendering/vertex.glsl"),GL46.GL_VERTEX_SHADER),
+				new Shader(FileHandling.loadResource("src/shaders/rendering/geometry.glsl"),GL46.GL_GEOMETRY_SHADER),
+				new Shader(FileHandling.loadResource("src/shaders/rendering/fragmentSolidColour.glsl"),GL46.GL_FRAGMENT_SHADER)
+		});
+		solidColourProgram.link();
+		
+		stencilProgram=new Program();
+		
+		stencilProgram.attachShaders(new Shader[]{
+				new Shader(FileHandling.loadResource("src/shaders/screen/vertex.glsl"),GL46.GL_VERTEX_SHADER),
+				new Shader(FileHandling.loadResource("src/shaders/screen/fragment.glsl"),GL46.GL_FRAGMENT_SHADER)
+		});
+		
+		stencilProgram.link();
 
 		renderProgram.createUniform("projectionMatrix");
 		renderProgram.createUniform("viewMatrix");
 		renderProgram.createUniform("colour");
 		renderProgram.createUniform("cameraPos");
 		renderProgram.createUniform("translation");
+		
+		solidColourProgram.createUniform("projectionMatrix");
+		solidColourProgram.createUniform("viewMatrix");
+		solidColourProgram.createUniform("colour");
+		solidColourProgram.createUniform("cameraPos");
+		solidColourProgram.createUniform("translation");
+		
+		stencilProgram.createUniform("scalar");
 
 		terrainHandler.generate();
 
@@ -92,11 +138,30 @@ public class Main {
 	
 	private void render(){
 		window.loop();
-		GL46.glClear(GL46.GL_COLOR_BUFFER_BIT | GL46.GL_DEPTH_BUFFER_BIT);
+		GL46.glClear(GL46.GL_DEPTH_BUFFER_BIT | GL46.GL_STENCIL_BUFFER_BIT);
+		
+		GL46.glStencilOp(GL46.GL_KEEP, GL46.GL_REPLACE, GL46.GL_REPLACE);
+		GL46.glStencilFunc(GL46.GL_ALWAYS, 1, 0xFF);
+		GL46.glStencilMask(0xFF);
+		stencilProgram.useProgram();
+		stencilProgram.setUniform("scalar", 0.5f);
+		square.render(stencilProgram);
+		
+		GL46.glClear(GL46.GL_COLOR_BUFFER_BIT);
+		
+		GL46.glStencilFunc(GL46.GL_EQUAL, 0, 0xFF);
+		GL46.glStencilMask(0x00);
 		renderProgram.useProgram();
+        GL46.glEnable(GL_CULL_FACE);
 		for(TerrainChunk chunk: terrainHandler.getChunks()){
 			chunk.render(renderProgram,camera);
 		}
+		GL46.glStencilFunc(GL46.GL_EQUAL, 1, 0xFF);
+		solidColourProgram.useProgram();
+		for(TerrainChunk chunk: terrainHandler.getChunks()){
+			chunk.render(solidColourProgram,camera);
+		}
+        GL46.glDisable(GL_CULL_FACE);
 	}
 	
 	private void update(){
@@ -123,6 +188,9 @@ public class Main {
 		for(TerrainChunk chunk: terrainHandler.getChunks()){
 			chunk.cleanup();
 		}
+		square.cleanup();
+		
 		renderProgram.cleanup();
+		stencilProgram.cleanup();
 	}
 }
