@@ -3,13 +3,9 @@ package main;
 import gameLogic.Camera;
 import gameLogic.Terrain;
 import gameLogic.TerrainModifier;
-
-import static org.lwjgl.opengl.GL11.GL_CULL_FACE;
-
 import org.joml.Vector3f;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.opengl.GL46;
-
 import rendering.Mesh2D;
 import rendering.Program;
 import rendering.Shader;
@@ -17,6 +13,8 @@ import rendering.TerrainChunk;
 import utils.FileHandling;
 import utils.Input;
 import utils.Timer;
+
+import static org.lwjgl.opengl.GL11.GL_CULL_FACE;
 
 public class Main {
 	
@@ -140,27 +138,27 @@ public class Main {
 		window.loop();
 		GL46.glClear(GL46.GL_DEPTH_BUFFER_BIT | GL46.GL_STENCIL_BUFFER_BIT);
 		
-		GL46.glStencilOp(GL46.GL_KEEP, GL46.GL_REPLACE, GL46.GL_REPLACE);
-		GL46.glStencilFunc(GL46.GL_ALWAYS, 1, 0xFF);
-		GL46.glStencilMask(0xFF);
-		stencilProgram.useProgram();
-		stencilProgram.setUniform("scalar", 0.5f);
-		square.render(stencilProgram);
+//		GL46.glStencilOp(GL46.GL_KEEP, GL46.GL_REPLACE, GL46.GL_REPLACE);
+//		GL46.glStencilFunc(GL46.GL_ALWAYS, 1, 0xFF);
+//		GL46.glStencilMask(0xFF);
+//		stencilProgram.useProgram();
+//		stencilProgram.setUniform("scalar", 0.5f);
+//		square.render(stencilProgram);
 		
 		GL46.glClear(GL46.GL_COLOR_BUFFER_BIT);
 		
-		GL46.glStencilFunc(GL46.GL_EQUAL, 0, 0xFF);
-		GL46.glStencilMask(0x00);
+//		GL46.glStencilFunc(GL46.GL_EQUAL, 0, 0xFF);
+//		GL46.glStencilMask(0x00);
 		renderProgram.useProgram();
         GL46.glEnable(GL_CULL_FACE);
 		for(TerrainChunk chunk: terrainHandler.getChunks()){
 			chunk.render(renderProgram,camera);
 		}
-		GL46.glStencilFunc(GL46.GL_EQUAL, 1, 0xFF);
-		solidColourProgram.useProgram();
-		for(TerrainChunk chunk: terrainHandler.getChunks()){
-			chunk.render(solidColourProgram,camera);
-		}
+//		GL46.glStencilFunc(GL46.GL_EQUAL, 1, 0xFF);
+//		solidColourProgram.useProgram();
+//		for(TerrainChunk chunk: terrainHandler.getChunks()){
+//			chunk.render(solidColourProgram,camera);
+//		}
         GL46.glDisable(GL_CULL_FACE);
 	}
 	
