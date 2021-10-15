@@ -1,15 +1,17 @@
 package gameLogic;
 
-import gameLogic.PerlinNoise.PerlinNoise;
+import java.nio.FloatBuffer;
+import java.util.ArrayList;
+import java.util.Arrays;
+
 import org.joml.Vector3f;
 import org.joml.Vector3i;
 import org.lwjgl.opengl.GL46;
 import org.lwjgl.system.MemoryUtil;
+
+import gameLogic.PerlinNoise.PerlinNoise;
 import rendering.Mesh;
 import rendering.TerrainChunk;
-
-import java.nio.FloatBuffer;
-import java.util.Arrays;
 
 public class Generator {
     private final TriangulationTable triangulationTable;

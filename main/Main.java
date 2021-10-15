@@ -107,6 +107,7 @@ public class Main {
 		renderProgram.createUniform("colour");
 		renderProgram.createUniform("cameraPos");
 		renderProgram.createUniform("translation");
+		renderProgram.createUniform("time");
 		
 		solidColourProgram.createUniform("projectionMatrix");
 		solidColourProgram.createUniform("viewMatrix");
@@ -144,13 +145,14 @@ public class Main {
 //		stencilProgram.useProgram();
 //		stencilProgram.setUniform("scalar", 0.5f);
 //		square.render(stencilProgram);
-		
+//		
 		GL46.glClear(GL46.GL_COLOR_BUFFER_BIT);
-		
+//		
 //		GL46.glStencilFunc(GL46.GL_EQUAL, 0, 0xFF);
 //		GL46.glStencilMask(0x00);
 		renderProgram.useProgram();
-        GL46.glEnable(GL_CULL_FACE);
+		renderProgram.setUniform("time",(float)timer.getCurrentTime()*0.1f);
+//        GL46.glEnable(GL_CULL_FACE);
 		for(TerrainChunk chunk: terrainHandler.getChunks()){
 			chunk.render(renderProgram,camera);
 		}
@@ -159,7 +161,7 @@ public class Main {
 //		for(TerrainChunk chunk: terrainHandler.getChunks()){
 //			chunk.render(solidColourProgram,camera);
 //		}
-        GL46.glDisable(GL_CULL_FACE);
+//        GL46.glDisable(GL_CULL_FACE);
 	}
 	
 	private void update(){

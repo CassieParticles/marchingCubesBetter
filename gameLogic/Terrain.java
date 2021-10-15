@@ -2,6 +2,7 @@ package gameLogic;
 
 import org.joml.Vector3f;
 import org.joml.Vector3i;
+
 import rendering.TerrainChunk;
 
 public class Terrain {
@@ -11,10 +12,10 @@ public class Terrain {
     private int size;
     private int numberOfChunks;
 
-    private int radius=8;
+    private int radius=50;
     private float noiseMagnitude=0.02f;
     private float noiseFrequency=0.17f;
-    private int chunkSize=30;
+    private int chunkSize=20;
 
     public Terrain(){
         this.generator=new Generator();
@@ -67,6 +68,7 @@ public class Terrain {
     public TerrainChunk[] getChunks() {
         return chunks;
     }
+    
 
     public float[][][] getScalarField(){
         return scalarField;
