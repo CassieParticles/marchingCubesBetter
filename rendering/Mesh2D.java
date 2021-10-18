@@ -50,8 +50,6 @@ public class Mesh2D {
 
 
     public void render(Program program){
-        program.useProgram();
-
         GL46.glBindVertexArray(getVaoId());
 
         GL46.glEnableVertexAttribArray(0);
@@ -61,9 +59,6 @@ public class Mesh2D {
         GL46.glDisableVertexAttribArray(0);
 
         GL46.glBindVertexArray(0);
-        
-        program.unlinkProgram();
-
     }
 
 

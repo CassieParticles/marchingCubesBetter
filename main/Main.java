@@ -6,10 +6,7 @@ import gameLogic.TerrainModifier;
 import org.joml.Vector3f;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.opengl.GL46;
-import rendering.Mesh2D;
-import rendering.Program;
-import rendering.Shader;
-import rendering.TerrainChunk;
+import rendering.*;
 import utils.FileHandling;
 import utils.Input;
 import utils.Timer;
@@ -23,12 +20,13 @@ public class Main {
 
 	private Program renderProgram;
 	private Program solidColourProgram;
-	private Program stencilProgram;
+	private Program screenProgram;
+
+	private FrameBuffer frameBuffer;
+	private Screen screen;
 
 	private Terrain terrainHandler;
 	private TerrainModifier terrainModifier;
-	
-	private Mesh2D square;
 
 	private int explode=0;
 	
@@ -60,22 +58,21 @@ public class Main {
 		camera.calculateProjectionMatrix((float)Math.toRadians(60),0.1f,1000f,window.getAspectRatio());
 		terrainHandler=new Terrain();
 		terrainModifier=new TerrainModifier(terrainHandler);
+		frameBuffer=new FrameBuffer();
 
 		camera.rotate(new Vector3f(-30,90,0));
 		
-		float[] vertices=new float[]{
-				-1f,1f,
-				1f,1f,
-				1f,-1f,
-				-1f,-1f
-		};
-		
-		int[] indices=new int[]{
-				0,1,2,
-				0,2,3
-		};
-		
-		square=new Mesh2D(vertices,indices);
+		screen=new Screen();
+
+		frameBuffer.attachTextures(new Texture2D[]{
+				new Texture2D(window.getWidth(),window.getHeight(),GL46.GL_RGBA,GL46.GL_RGBA,GL46.GL_FLOAT),
+				new Texture2D(window.getWidth(), window.getHeight(),GL46.GL_RGBA,GL46.GL_RGBA,GL46.GL_FLOAT),
+				new Texture2D(window.getWidth(), window.getHeight(),GL46.GL_DEPTH24_STENCIL8,GL46.GL_DEPTH_STENCIL,GL46.GL_UNSIGNED_INT_24_8)
+				},new int[]{
+						GL46.GL_COLOR_ATTACHMENT0,
+						GL46.GL_COLOR_ATTACHMENT1,
+						GL46.GL_DEPTH_STENCIL_ATTACHMENT
+				});
 
 		renderProgram=new Program();
 		renderProgram.attachShaders(new Shader[]{
@@ -93,18 +90,17 @@ public class Main {
 		});
 		solidColourProgram.link();
 		
-		stencilProgram=new Program();
+		screenProgram =new Program();
 		
-		stencilProgram.attachShaders(new Shader[]{
+		screenProgram.attachShaders(new Shader[]{
 				new Shader(FileHandling.loadResource("src/shaders/screen/vertex.glsl"),GL46.GL_VERTEX_SHADER),
 				new Shader(FileHandling.loadResource("src/shaders/screen/fragment.glsl"),GL46.GL_FRAGMENT_SHADER)
 		});
 		
-		stencilProgram.link();
+		screenProgram.link();
 
 		renderProgram.createUniform("projectionMatrix");
 		renderProgram.createUniform("viewMatrix");
-		renderProgram.createUniform("colour");
 		renderProgram.createUniform("cameraPos");
 		renderProgram.createUniform("translation");
 		renderProgram.createUniform("time");
@@ -112,11 +108,9 @@ public class Main {
 		
 		solidColourProgram.createUniform("projectionMatrix");
 		solidColourProgram.createUniform("viewMatrix");
-		solidColourProgram.createUniform("colour");
-		solidColourProgram.createUniform("cameraPos");
 		solidColourProgram.createUniform("translation");
 		
-		stencilProgram.createUniform("scalar");
+		screenProgram.createUniform("screenTexture");
 
 		terrainHandler.generate();
 
@@ -138,32 +132,33 @@ public class Main {
 	
 	private void render(){
 		window.loop();
-		GL46.glClear(GL46.GL_DEPTH_BUFFER_BIT | GL46.GL_STENCIL_BUFFER_BIT);
-		
-//		GL46.glStencilOp(GL46.GL_KEEP, GL46.GL_REPLACE, GL46.GL_REPLACE);
-//		GL46.glStencilFunc(GL46.GL_ALWAYS, 1, 0xFF);
-//		GL46.glStencilMask(0xFF);
-//		stencilProgram.useProgram();
-//		stencilProgram.setUniform("scalar", 0.5f);
-//		square.render(stencilProgram);
-		
-		GL46.glClear(GL46.GL_COLOR_BUFFER_BIT);
-		
-//		GL46.glStencilFunc(GL46.GL_EQUAL, 0, 0xFF);
-//		GL46.glStencilMask(0x00);
+
+
+		frameBuffer.bindFrameBuffer();
+		GL46.glClearColor(0.1f, 0.1f, 0.2f, 1.0f);
+		GL46.glClear(GL46.GL_DEPTH_BUFFER_BIT |GL46.GL_COLOR_BUFFER_BIT);
+
 		renderProgram.useProgram();
 		renderProgram.setUniform("time",(float)timer.getCurrentTime());
 		renderProgram.setUniform("explodeTrue",explode);
-//        GL46.glEnable(GL_CULL_FACE);
+
+        GL46.glEnable(GL46.GL_CULL_FACE);
+		GL46.glEnable(GL46.GL_DEPTH_TEST);
 		for(TerrainChunk chunk: terrainHandler.getChunks()){
 			chunk.render(renderProgram,camera);
 		}
-//		GL46.glStencilFunc(GL46.GL_EQUAL, 1, 0xFF);
-//		solidColourProgram.useProgram();
-//		for(TerrainChunk chunk: terrainHandler.getChunks()){
-//			chunk.render(solidColourProgram,camera);
-//		}
-//        GL46.glDisable(GL_CULL_FACE);
+
+        GL46.glDisable(GL46.GL_CULL_FACE);
+		GL46.glDisable(GL46.GL_DEPTH_TEST);
+
+		frameBuffer.unbindFrameBuffer();
+		GL46.glClearColor(1f, 1f, 1f, 1f);
+		GL46.glClear(GL46.GL_COLOR_BUFFER_BIT);
+		screenProgram.useProgram();
+
+		screen.render(screenProgram,frameBuffer.getTexture(0));
+
+		screenProgram.unlinkProgram();
 	}
 	
 	private void update(){
@@ -192,9 +187,11 @@ public class Main {
 		for(TerrainChunk chunk: terrainHandler.getChunks()){
 			chunk.cleanup();
 		}
-		square.cleanup();
+		screen.cleanup();
 		
 		renderProgram.cleanup();
-		stencilProgram.cleanup();
+		screenProgram.cleanup();
+		solidColourProgram.cleanup();
+		frameBuffer.cleanup();
 	}
 }

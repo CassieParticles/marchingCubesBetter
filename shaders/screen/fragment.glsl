@@ -1,7 +1,11 @@
 #version 450
 
-out vec4 FragColour;
+in vec2 outTextCoords;
+
+uniform sampler2D screenTexture;
+
+layout(location=0) out vec4 FragColour;
 
 void main(){
-	FragColour=vec4(0,0,0,1);
+	FragColour=texture(screenTexture,outTextCoords);
 }
