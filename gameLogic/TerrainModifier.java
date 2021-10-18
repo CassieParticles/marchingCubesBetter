@@ -21,6 +21,7 @@ public class TerrainModifier {
                     float dist=distSqr<0?0:(float)Math.sqrt(distSqr);
                     float paint=Math.max((float)(r-dist)/r,0)*opacity;
                     terrain.addFloat(localX+x,localY+y,localZ+z,paint);
+
                 }
             }
         }
@@ -33,5 +34,6 @@ public class TerrainModifier {
                 }
             }
         }
+        System.out.println(count);
     }
 }

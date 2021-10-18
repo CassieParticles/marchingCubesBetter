@@ -29,6 +29,7 @@ public class Generator {
         float distFromOriginNormalised=(radius-distFromOrigin)/radius;
         float noiseVal=(noise.genPoint((x-size)*noiseFrequency,(y-size)*noiseFrequency,(z-size)*noiseFrequency));
         return Math.min(distFromOriginNormalised+(noiseVal-1)*noiseMagnitude,noiseVal+0.3f);
+//        return -1f;
     }
 
     public float[][][] genScalarField(int size, int radius, float noiseFrequency, float noiseMagnitude){

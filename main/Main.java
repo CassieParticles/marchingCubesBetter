@@ -14,8 +14,6 @@ import utils.FileHandling;
 import utils.Input;
 import utils.Timer;
 
-import static org.lwjgl.opengl.GL11.GL_CULL_FACE;
-
 public class Main {
 	
 	private Timer timer;
@@ -31,6 +29,8 @@ public class Main {
 	private TerrainModifier terrainModifier;
 	
 	private Mesh2D square;
+
+	private int explode=0;
 	
 	private int penSize=10;
 
@@ -107,6 +107,8 @@ public class Main {
 		renderProgram.createUniform("colour");
 		renderProgram.createUniform("cameraPos");
 		renderProgram.createUniform("translation");
+		renderProgram.createUniform("time");
+		renderProgram.createUniform("explodeTrue");
 		
 		solidColourProgram.createUniform("projectionMatrix");
 		solidColourProgram.createUniform("viewMatrix");
@@ -150,7 +152,9 @@ public class Main {
 //		GL46.glStencilFunc(GL46.GL_EQUAL, 0, 0xFF);
 //		GL46.glStencilMask(0x00);
 		renderProgram.useProgram();
-        GL46.glEnable(GL_CULL_FACE);
+		renderProgram.setUniform("time",(float)timer.getCurrentTime());
+		renderProgram.setUniform("explodeTrue",explode);
+//        GL46.glEnable(GL_CULL_FACE);
 		for(TerrainChunk chunk: terrainHandler.getChunks()){
 			chunk.render(renderProgram,camera);
 		}
@@ -159,7 +163,7 @@ public class Main {
 //		for(TerrainChunk chunk: terrainHandler.getChunks()){
 //			chunk.render(solidColourProgram,camera);
 //		}
-        GL46.glDisable(GL_CULL_FACE);
+//        GL46.glDisable(GL_CULL_FACE);
 	}
 	
 	private void update(){
@@ -176,6 +180,8 @@ public class Main {
 			if(penSize>1){
 				penSize--;
 			}
+		}if(input.isKeyPressed(GLFW.GLFW_KEY_SPACE)){
+			explode=1-explode;
 		}
 		camera.control(input,timer);
 		input.updateInputs();
