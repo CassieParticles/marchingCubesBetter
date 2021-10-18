@@ -10,6 +10,7 @@ public class TerrainChunk {
     private final int size;
 
     private Mesh mesh;
+    private boolean hasTriangles;
 
     public TerrainChunk(Vector3i offset, Generator generator, int size){
         this.offset=offset;
@@ -22,10 +23,15 @@ public class TerrainChunk {
             mesh.cleanup();
         }
         mesh=generator.calcMesh(newValues,offset,size-1);
+        hasTriangles=mesh.getVertexCount()!=0;
     }
     
     public int getTriangleCount() {
-    	return mesh.getVertexCount()/9;
+    	return mesh.getVertexCount()/3;
+    }
+    
+    public boolean hasTriangles(){
+    	return hasTriangles;
     }
 
     public void render(Program program, Camera camera){

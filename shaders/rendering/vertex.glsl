@@ -2,8 +2,6 @@
 
 layout(location=0) in vec3 position;
 
-uniform mat4 projectionMatrix;
-uniform mat4 viewMatrix;
 uniform vec3 translation;
 
 out vec3 transformedPos;

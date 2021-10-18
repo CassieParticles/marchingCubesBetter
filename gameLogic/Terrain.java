@@ -2,6 +2,7 @@ package gameLogic;
 
 import org.joml.Vector3f;
 import org.joml.Vector3i;
+
 import rendering.TerrainChunk;
 
 public class Terrain {
@@ -67,6 +68,7 @@ public class Terrain {
     public TerrainChunk[] getChunks() {
         return chunks;
     }
+    
 
     public float[][][] getScalarField(){
         return scalarField;
