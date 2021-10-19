@@ -1,5 +1,6 @@
 package rendering;
 
+import org.joml.Vector4f;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL46;
 import org.lwjgl.stb.STBImage;
@@ -109,6 +110,18 @@ public class Texture2D {
         GL46.glBindTexture(GL46.GL_TEXTURE_2D,0);
 
         MemoryUtil.memFree(buffer);
+    }
+
+    public Vector4f readFromTexture(int x, int y){
+        GL46.glBindTexture(GL46.GL_TEXTURE_2D,id);
+        float[] floatArray=new float[4];
+
+        GL46.glReadPixels(x,y,1,1,GL46.GL_RGB,GL46.GL_FLOAT,floatArray);
+        Vector4f vec=new Vector4f(floatArray[0],floatArray[1],floatArray[2],floatArray[3]);
+
+        GL46.glBindTexture(GL46.GL_TEXTURE_2D,0);
+
+        return vec;
     }
 
 

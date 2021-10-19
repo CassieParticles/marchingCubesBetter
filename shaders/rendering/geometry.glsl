@@ -39,15 +39,15 @@ void main() {
     normal=getNormal();
 
     gl_Position=projectionMatrix*viewMatrix*explode(gl_in[0].gl_Position,normal);
-    fragPos=explode(transformedPos[0],normal);
+    fragPos=transformedPos[0];
     EmitVertex();
 
     gl_Position=projectionMatrix*viewMatrix*explode(gl_in[1].gl_Position,normal);
-    fragPos=explode(transformedPos[1],normal);
+    fragPos=transformedPos[1];
     EmitVertex();
 
     gl_Position=projectionMatrix*viewMatrix*explode(gl_in[2].gl_Position,normal);
-    fragPos=explode(transformedPos[2],normal);
+    fragPos=transformedPos[2];
     EmitVertex();
 
     EndPrimitive();

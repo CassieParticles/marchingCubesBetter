@@ -34,6 +34,5 @@ public class TerrainModifier {
                 }
             }
         }
-        System.out.println(count);
     }
 }

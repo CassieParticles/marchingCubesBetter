@@ -6,7 +6,8 @@ in vec3 normal;
 uniform vec3 colour;
 uniform vec3 cameraPos;
 
-out vec4 FragColour;
+layout(location=0) out vec4 FragColour;
+layout(location=1) out vec3 FragPosition;
 
 float calcLighting(){
     vec3 dirToCam=normalize(cameraPos-fragPos);
@@ -17,4 +18,5 @@ float calcLighting(){
 void main() {
     vec3 colour=(normal+vec3(1,1,1))/2;
     FragColour=vec4(colour,1);
+    FragPosition=fragPos;
 }

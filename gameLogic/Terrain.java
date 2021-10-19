@@ -77,4 +77,6 @@ public class Terrain {
     public int getChunkSize(){
         return chunkSize;
     }
+
+    public int getSize(){return size;}
 }

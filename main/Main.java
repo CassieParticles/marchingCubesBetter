@@ -4,6 +4,7 @@ import gameLogic.Camera;
 import gameLogic.Terrain;
 import gameLogic.TerrainModifier;
 import org.joml.Vector3f;
+import org.joml.Vector4f;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.opengl.GL46;
 import rendering.*;
@@ -66,7 +67,7 @@ public class Main {
 
 		frameBuffer.attachTextures(new Texture2D[]{
 				new Texture2D(window.getWidth(),window.getHeight(),GL46.GL_RGBA,GL46.GL_RGBA,GL46.GL_FLOAT),
-				new Texture2D(window.getWidth(), window.getHeight(),GL46.GL_RGBA,GL46.GL_RGBA,GL46.GL_FLOAT),
+				new Texture2D(window.getWidth(), window.getHeight(),GL46.GL_RGB,GL46.GL_RGB,GL46.GL_FLOAT),
 				new Texture2D(window.getWidth(), window.getHeight(),GL46.GL_DEPTH24_STENCIL8,GL46.GL_DEPTH_STENCIL,GL46.GL_UNSIGNED_INT_24_8)
 				},new int[]{
 						GL46.GL_COLOR_ATTACHMENT0,
@@ -135,6 +136,7 @@ public class Main {
 
 
 		frameBuffer.bindFrameBuffer();
+		GL46.glDrawBuffers(new int[]{GL46.GL_COLOR_ATTACHMENT0,GL46.GL_COLOR_ATTACHMENT1});
 		GL46.glClearColor(0.1f, 0.1f, 0.2f, 1.0f);
 		GL46.glClear(GL46.GL_DEPTH_BUFFER_BIT |GL46.GL_COLOR_BUFFER_BIT);
 
@@ -166,9 +168,13 @@ public class Main {
 		if(input.isKeyDown(GLFW.GLFW_KEY_ESCAPE)){
     		window.close();
     	}if(input.isKeyDown(GLFW.GLFW_KEY_LEFT_CONTROL)){
-			terrainModifier.addCircleArea((int)camera.getPosition().x,(int)camera.getPosition().y,(int)camera.getPosition().z,penSize,3f*(float)timer.getDeltaUpdate());
+			Vector4f centrePos=frameBuffer.getTexture(1).readFromTexture(450,450).mul(terrainHandler.getSize());
+			System.out.println(centrePos);
+			terrainModifier.addCircleArea((int)(centrePos.x),(int)centrePos.y,(int)centrePos.z,penSize,3f*(float)timer.getDeltaUpdate());
 		}if(input.isKeyDown(GLFW.GLFW_KEY_LEFT_SHIFT)){
-			terrainModifier.addCircleArea((int)camera.getPosition().x,(int)camera.getPosition().y,(int)camera.getPosition().z,penSize,-3f*(float)timer.getDeltaUpdate());
+			Vector4f centrePos=frameBuffer.getTexture(1).readFromTexture(450,450).mul(terrainHandler.getSize());
+			System.out.println(centrePos);
+			terrainModifier.addCircleArea((int)(centrePos.x),(int)centrePos.y,(int)centrePos.z,penSize,-3f*(float)timer.getDeltaUpdate());
 		}if(input.isKeyPressed(GLFW.GLFW_KEY_PERIOD)){	// >
 			penSize++;
 		}if(input.isKeyPressed(GLFW.GLFW_KEY_COMMA)){	// <
