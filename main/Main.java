@@ -3,6 +3,7 @@ package main;
 import gameLogic.Camera;
 import gameLogic.Terrain;
 import gameLogic.TerrainModifier;
+import gameLogic.TextureSampler;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
 import org.lwjgl.glfw.GLFW;
@@ -23,8 +24,10 @@ public class Main {
 	private Program solidColourProgram;
 	private Program screenProgram;
 
-	private FrameBuffer frameBuffer;
+	private FrameBuffer terrainFrameBuffer;
 	private Screen screen;
+
+	private TextureSampler textureSampler;
 
 	private Terrain terrainHandler;
 	private TerrainModifier terrainModifier;
@@ -59,13 +62,15 @@ public class Main {
 		camera.calculateProjectionMatrix((float)Math.toRadians(60),0.1f,1000f,window.getAspectRatio());
 		terrainHandler=new Terrain();
 		terrainModifier=new TerrainModifier(terrainHandler);
-		frameBuffer=new FrameBuffer();
+		terrainFrameBuffer =new FrameBuffer();
+
+		textureSampler=new TextureSampler(window);
 
 		camera.rotate(new Vector3f(-30,90,0));
 		
 		screen=new Screen();
 
-		frameBuffer.attachTextures(new Texture2D[]{
+		terrainFrameBuffer.attachTextures(new Texture2D[]{
 				new Texture2D(window.getWidth(),window.getHeight(),GL46.GL_RGBA,GL46.GL_RGBA,GL46.GL_FLOAT),
 				new Texture2D(window.getWidth(), window.getHeight(),GL46.GL_RGB,GL46.GL_RGB,GL46.GL_FLOAT),
 				new Texture2D(window.getWidth(), window.getHeight(),GL46.GL_DEPTH24_STENCIL8,GL46.GL_DEPTH_STENCIL,GL46.GL_UNSIGNED_INT_24_8)
@@ -106,7 +111,8 @@ public class Main {
 		renderProgram.createUniform("translation");
 		renderProgram.createUniform("time");
 		renderProgram.createUniform("explodeTrue");
-		
+		renderProgram.createUniform("size");
+
 		solidColourProgram.createUniform("projectionMatrix");
 		solidColourProgram.createUniform("viewMatrix");
 		solidColourProgram.createUniform("translation");
@@ -135,7 +141,7 @@ public class Main {
 		window.loop();
 
 
-		frameBuffer.bindFrameBuffer();
+		terrainFrameBuffer.bindFrameBuffer();
 		GL46.glDrawBuffers(new int[]{GL46.GL_COLOR_ATTACHMENT0,GL46.GL_COLOR_ATTACHMENT1});
 		GL46.glClearColor(0.1f, 0.1f, 0.2f, 1.0f);
 		GL46.glClear(GL46.GL_DEPTH_BUFFER_BIT |GL46.GL_COLOR_BUFFER_BIT);
@@ -143,6 +149,7 @@ public class Main {
 		renderProgram.useProgram();
 		renderProgram.setUniform("time",(float)timer.getCurrentTime());
 		renderProgram.setUniform("explodeTrue",explode);
+		renderProgram.setUniform("size",terrainHandler.getSize());
 
         GL46.glEnable(GL46.GL_CULL_FACE);
 		GL46.glEnable(GL46.GL_DEPTH_TEST);
@@ -153,12 +160,12 @@ public class Main {
         GL46.glDisable(GL46.GL_CULL_FACE);
 		GL46.glDisable(GL46.GL_DEPTH_TEST);
 
-		frameBuffer.unbindFrameBuffer();
+		terrainFrameBuffer.unbindFrameBuffer();
 		GL46.glClearColor(1f, 1f, 1f, 1f);
 		GL46.glClear(GL46.GL_COLOR_BUFFER_BIT);
 		screenProgram.useProgram();
 
-		screen.render(screenProgram,frameBuffer.getTexture(0));
+		screen.render(screenProgram, terrainFrameBuffer.getTexture(0));
 
 		screenProgram.unlinkProgram();
 	}
@@ -167,15 +174,7 @@ public class Main {
 
 		if(input.isKeyDown(GLFW.GLFW_KEY_ESCAPE)){
     		window.close();
-    	}if(input.isKeyDown(GLFW.GLFW_KEY_LEFT_CONTROL)){
-			Vector4f centrePos=frameBuffer.getTexture(1).readFromTexture(450,450).mul(terrainHandler.getSize());
-			System.out.println(centrePos);
-			terrainModifier.addCircleArea((int)(centrePos.x),(int)centrePos.y,(int)centrePos.z,penSize,3f*(float)timer.getDeltaUpdate());
-		}if(input.isKeyDown(GLFW.GLFW_KEY_LEFT_SHIFT)){
-			Vector4f centrePos=frameBuffer.getTexture(1).readFromTexture(450,450).mul(terrainHandler.getSize());
-			System.out.println(centrePos);
-			terrainModifier.addCircleArea((int)(centrePos.x),(int)centrePos.y,(int)centrePos.z,penSize,-3f*(float)timer.getDeltaUpdate());
-		}if(input.isKeyPressed(GLFW.GLFW_KEY_PERIOD)){	// >
+    	}if(input.isKeyPressed(GLFW.GLFW_KEY_PERIOD)){	// >
 			penSize++;
 		}if(input.isKeyPressed(GLFW.GLFW_KEY_COMMA)){	// <
 			if(penSize>1){
@@ -183,6 +182,16 @@ public class Main {
 			}
 		}if(input.isKeyPressed(GLFW.GLFW_KEY_SPACE)){
 			explode=1-explode;
+		}if(input.isMouseButtonDown(GLFW.GLFW_MOUSE_BUTTON_LEFT)){
+			int[] mousePos=input.getMousePos();
+			float[] position=textureSampler.sampleTexture(mousePos[0], window.getHeight()-mousePos[1], 1,1,terrainFrameBuffer.getTexture(1));
+			Vector4f centrePos= new Vector4f(position).mul(terrainHandler.getSize());
+			terrainModifier.addCircleArea((int)(centrePos.x),(int)centrePos.y,(int)centrePos.z,penSize,-1f*(float)timer.getDeltaUpdate());
+		}if(input.isMouseButtonDown(GLFW.GLFW_MOUSE_BUTTON_RIGHT)){
+			int[] mousePos=input.getMousePos();
+			float[] position=textureSampler.sampleTexture(mousePos[0], window.getHeight()-mousePos[1],1,1,terrainFrameBuffer.getTexture(1));
+			Vector4f centrePos= new Vector4f(position).mul(terrainHandler.getSize());
+			terrainModifier.addCircleArea((int)(centrePos.x),(int)centrePos.y,(int)centrePos.z,penSize,1f*(float)timer.getDeltaUpdate());
 		}
 		camera.control(input,timer);
 		input.updateInputs();
@@ -198,6 +207,7 @@ public class Main {
 		renderProgram.cleanup();
 		screenProgram.cleanup();
 		solidColourProgram.cleanup();
-		frameBuffer.cleanup();
+		terrainFrameBuffer.cleanup();
+		textureSampler.cleanup();
 	}
 }
