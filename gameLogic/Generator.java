@@ -1,17 +1,15 @@
 package gameLogic;
 
-import java.nio.FloatBuffer;
-import java.util.ArrayList;
-import java.util.Arrays;
-
+import gameLogic.PerlinNoise.PerlinNoise;
 import org.joml.Vector3f;
 import org.joml.Vector3i;
 import org.lwjgl.opengl.GL46;
 import org.lwjgl.system.MemoryUtil;
-
-import gameLogic.PerlinNoise.PerlinNoise;
 import rendering.Mesh;
 import rendering.TerrainChunk;
+
+import java.nio.FloatBuffer;
+import java.util.Arrays;
 
 public class Generator {
     private final TriangulationTable triangulationTable;
@@ -151,7 +149,7 @@ public class Generator {
                         edges[11]=interpolateYEdge(new Vector3f(x,y,z+1),new Vector3f(x,y+1,z+1),values[3],values[7]);//y
                     }
 
-                    for(int i=0;indices[i]!=-1;i+=3){
+                    for(int i=0;indices[i]!=15;i+=3){
                         Vector3f vertexA=edges[indices[i]];
                         Vector3f vertexB=edges[indices[i+1]];
                         Vector3f vertexC=edges[indices[i+2]];

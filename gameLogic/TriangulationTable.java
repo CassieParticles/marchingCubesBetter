@@ -177,13 +177,13 @@ public class TriangulationTable {
         int value=values[0];
         for(int i=7;i>=0;i--){
             int val=value&15;
-            triangles[i]=val==15?-1:val;
+            triangles[i]=val;
             value=value>>4;
         }
         value=values[1];
         for(int i=15;i>=8;i--){
             int val=value&15;
-            triangles[i]=val==15?-1:val;
+            triangles[i]=val;
             value=value>>4;
         }
         return triangles;

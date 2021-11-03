@@ -34,7 +34,7 @@ public class Main {
 
 	private int explode=0;
 	
-	private int penSize=10;
+	private int penSize=5;
 
 	public static void main(String[] args){
 		new Main().gameLoop();
@@ -151,13 +151,13 @@ public class Main {
 		renderProgram.setUniform("explodeTrue",explode);
 		renderProgram.setUniform("size",terrainHandler.getSize());
 
-        GL46.glEnable(GL46.GL_CULL_FACE);
+//        GL46.glEnable(GL46.GL_CULL_FACE);
 		GL46.glEnable(GL46.GL_DEPTH_TEST);
 		for(TerrainChunk chunk: terrainHandler.getChunks()){
 			chunk.render(renderProgram,camera);
 		}
 
-        GL46.glDisable(GL46.GL_CULL_FACE);
+//        GL46.glDisable(GL46.GL_CULL_FACE);
 		GL46.glDisable(GL46.GL_DEPTH_TEST);
 
 		terrainFrameBuffer.unbindFrameBuffer();

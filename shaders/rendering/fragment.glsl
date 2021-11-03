@@ -18,6 +18,6 @@ float calcLighting(){
 
 void main() {
     vec3 colour=(normal+vec3(1,1,1))/2;
-    FragColour=vec4(colour*calcLighting(),1);
+    FragColour=vec4(colour,1);
     FragPosition=fragPos/size;
 }

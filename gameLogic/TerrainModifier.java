@@ -26,13 +26,14 @@ public class TerrainModifier {
             }
         }
         int count=0;
-        for(int chunkX=x-r;chunkX<=x+r+chunkSize;chunkX+=chunkSize){
-            for(int chunkY=y-r;chunkY<=y+r+chunkSize;chunkY+=chunkSize){
-                for(int chunkZ=z-r;chunkZ<=z+r+chunkSize;chunkZ+=chunkSize){
+        for(int chunkX=x-r;chunkX/chunkSize<=(x+r)/chunkSize;chunkX+=chunkSize){
+            for(int chunkY=y-r;chunkY/ chunkSize<=(y+r)/chunkSize;chunkY+=chunkSize){
+                for(int chunkZ=z-r;chunkZ/ chunkSize<=(z+r)/chunkSize;chunkZ+=chunkSize){
                     terrain.reCalcMesh(terrain.findChunkIdFromCoord(new Vector3f(chunkX,chunkY,chunkZ)));
                     count++;
                 }
             }
         }
+        System.out.println(count);
     }
 }
