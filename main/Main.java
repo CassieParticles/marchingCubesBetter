@@ -34,7 +34,7 @@ public class Main {
 
 	private int explode=0;
 	
-	private int penSize=5;
+	private int penSize=10;
 
 	public static void main(String[] args){
 		new Main().gameLoop();
@@ -55,7 +55,7 @@ public class Main {
 		window=new Window(900,900,"gameing");
 		input=new Input();
 		timer=new Timer(60,60);	//UPS,FPS
-		camera=new Camera(30f,270);
+		camera=new Camera(70f,270);
 
 		window.init();
 		input.init(window);
@@ -199,9 +199,7 @@ public class Main {
 	
 	private void cleanup(){
 		window.cleanup();
-		for(TerrainChunk chunk: terrainHandler.getChunks()){
-			chunk.cleanup();
-		}
+		terrainHandler.cleanup();
 		screen.cleanup();
 		
 		renderProgram.cleanup();

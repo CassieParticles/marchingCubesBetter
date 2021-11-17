@@ -7,25 +7,28 @@ import rendering.TerrainChunk;
 
 public class Terrain {
     private float[][][] scalarField;
+    private float[] linearScalarField;
     private TerrainChunk[] chunks;
     private Generator generator;
+    private ComputeGeneration comGen;
     private int size;
     private int numberOfChunks;
 
-    private int radius=60;
+    private int radius=150;
     private float noiseMagnitude=0.02f;
     private float noiseFrequency=0.17f;
-    private int chunkSize=30;
+    private int chunkSize=40;
 
     public Terrain(){
         this.generator=new Generator();
     }
 
-    public void generate(){
+    public void generate() throws Exception {
         numberOfChunks=(int)Math.ceil(radius*2*(1+noiseMagnitude)/chunkSize);
         size=numberOfChunks*chunkSize;
-        scalarField=generator.genScalarField(numberOfChunks*chunkSize,radius,noiseFrequency,noiseMagnitude);
-        chunks=generator.generateTerrainChunks(scalarField,chunkSize);
+        comGen=new ComputeGeneration(size+1);
+        linearScalarField= comGen.generate(radius);
+        chunks=generator.generateTerrainChunksLinear(linearScalarField,size,chunkSize);
     }
 
     public void setFloat(int x, int y, int z, float val){
@@ -42,7 +45,7 @@ public class Terrain {
         if(x>0&&x<size){
             if(y>0&&y<size){
                 if(z>0&&z<size){
-                    scalarField[x][y][z]+=add;
+                    linearScalarField[(x*(size+1)+y)*(size+1)+z]+=add;
                 }
             }
         }
@@ -52,7 +55,7 @@ public class Terrain {
         if(id==-1){
             return;
         }
-        chunks[id].calcMesh(scalarField);
+        chunks[id].calcLinearMesh(linearScalarField,size);
     }
 
     public int findChunkIdFromCoord(Vector3f coordinate){
@@ -79,4 +82,11 @@ public class Terrain {
     }
 
     public int getSize(){return size;}
+
+    public void cleanup(){
+        comGen.cleanup();
+        for(TerrainChunk chunk:chunks){
+            chunk.cleanup();
+        }
+    }
 }

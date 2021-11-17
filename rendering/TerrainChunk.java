@@ -7,22 +7,30 @@ import org.joml.Vector3i;
 public class TerrainChunk {
     private final Vector3i offset;
     private final Generator generator;
-    private final int size;
+    private final int chunkSize;
 
     private Mesh mesh;
     private boolean hasTriangles;
 
-    public TerrainChunk(Vector3i offset, Generator generator, int size){
+    public TerrainChunk(Vector3i offset, Generator generator, int chunkSize){
         this.offset=offset;
         this.generator=generator;
-        this.size=size;
+        this.chunkSize=chunkSize;
     }
 
-    public void calcMesh(float[][][] newValues){
+//    public void calcMesh(float[][][] newValues){
+//        if(mesh!=null){
+//            mesh.cleanup();
+//        }
+//        mesh=generator.calcMesh(newValues,offset,size-1);
+//        hasTriangles=mesh.getVertexCount()!=0;
+//    }
+
+    public void calcLinearMesh(float[] newValues,int size){
         if(mesh!=null){
             mesh.cleanup();
         }
-        mesh=generator.calcMesh(newValues,offset,size-1);
+        mesh=generator.calcMeshLinear(newValues,offset, chunkSize-1,size);
         hasTriangles=mesh.getVertexCount()!=0;
     }
     
