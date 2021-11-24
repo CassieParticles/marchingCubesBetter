@@ -99,8 +99,8 @@ public class Main {
 		screenProgram =new Program();
 		
 		screenProgram.attachShaders(new Shader[]{
-				new Shader(FileHandling.loadResource("src/shaders/screen/vertex.glsl"),GL46.GL_VERTEX_SHADER),
-				new Shader(FileHandling.loadResource("src/shaders/screen/fragment.glsl"),GL46.GL_FRAGMENT_SHADER)
+				new Shader(FileHandling.loadResource("src/shaders/frame/vertex.glsl"),GL46.GL_VERTEX_SHADER),
+				new Shader(FileHandling.loadResource("src/shaders/frame/fragment.glsl"),GL46.GL_FRAGMENT_SHADER)
 		});
 		
 		screenProgram.link();

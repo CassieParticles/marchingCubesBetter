@@ -97,6 +97,10 @@ public class Generator {
                             scalarField[(x*(size+1)+(y+1))*(size+1)+(z+1)]
                     };
 
+//                    if(values[0]!=0){
+//                        System.out.println(values[0]);
+//                    }
+
                     int voxelIndex=0;
                     if(values[0]>=0){voxelIndex+=1;}
                     if(values[1]>=0){voxelIndex+=2;}

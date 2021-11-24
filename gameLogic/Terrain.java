@@ -5,6 +5,8 @@ import org.joml.Vector3i;
 
 import rendering.TerrainChunk;
 
+import java.util.concurrent.ThreadLocalRandom;
+
 public class Terrain {
     private float[][][] scalarField;
     private float[] linearScalarField;
@@ -14,8 +16,8 @@ public class Terrain {
     private int size;
     private int numberOfChunks;
 
-    private int radius=150;
-    private float noiseMagnitude=0.02f;
+    private int radius=75;
+    private float noiseMagnitude=30;
     private float noiseFrequency=0.17f;
     private int chunkSize=40;
 
@@ -24,10 +26,10 @@ public class Terrain {
     }
 
     public void generate() throws Exception {
-        numberOfChunks=(int)Math.ceil(radius*2*(1+noiseMagnitude)/chunkSize);
+        numberOfChunks=(int)Math.ceil((radius*2+noiseMagnitude)/chunkSize);
         size=numberOfChunks*chunkSize;
         comGen=new ComputeGeneration(size+1);
-        linearScalarField= comGen.generate(radius);
+        linearScalarField= comGen.generate(radius, ThreadLocalRandom.current().nextFloat(),1f/size,noiseMagnitude );
         chunks=generator.generateTerrainChunksLinear(linearScalarField,size,chunkSize);
     }
 
