@@ -30,7 +30,7 @@ public class TerrainChunk {
         if(mesh!=null){
             mesh.cleanup();
         }
-        mesh=generator.calcMeshLinear(newValues,offset, chunkSize-1,size);
+        mesh=generator.calcMesh(newValues,offset, chunkSize-1,size);
         hasTriangles=mesh.getVertexCount()!=0;
     }
     

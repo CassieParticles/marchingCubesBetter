@@ -24,16 +24,8 @@ public class Generator {
         return a*a;
     }
 
-    private float generateScalar(float x, float y, float z,int size, int radius, float noiseFrequency, float noiseMagnitude){
-        float distFromOrigin=(float)Math.sqrt(Math.abs(square(x-(size/2))+square(y-(size/2))+square(z-(size/2))));
-        float distFromOriginNormalised=(radius-distFromOrigin)/radius;
-        float noiseVal=(noise.genPoint((x-size)*noiseFrequency,(y-size)*noiseFrequency,(z-size)*noiseFrequency));
-        return Math.min(distFromOriginNormalised+(noiseVal-1)*noiseMagnitude,noiseVal+0.3f);
-//        return -1f;
-    }
 
-
-    public TerrainChunk[] generateTerrainChunksLinear(float[] scalarField,int size, int chunkSize){
+    public TerrainChunk[] generateTerrainChunks(float[] scalarField, int size, int chunkSize){
         int chunksNumber=(int)Math.ceil((float)size/chunkSize);
         TerrainChunk[] chunks=new TerrainChunk[chunksNumber*chunksNumber*chunksNumber];
         int count=0;
@@ -80,7 +72,7 @@ public class Generator {
         }
     }
 
-    public Mesh calcMeshLinear(float[] scalarField, Vector3i offset, int chunkSize, int size){
+    public Mesh calcMesh(float[] scalarField, Vector3i offset, int chunkSize, int size){
         float[] triangles=new float[45*chunkSize*chunkSize*chunkSize];
         int triangleCount=0;
         for(int x=offset.x;x<=offset.x+chunkSize;x++){

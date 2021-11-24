@@ -29,8 +29,8 @@ public class Terrain {
         numberOfChunks=(int)Math.ceil((radius*2+noiseMagnitude)/chunkSize);
         size=numberOfChunks*chunkSize;
         comGen=new ComputeGeneration(size+1);
-        linearScalarField= comGen.generate(radius, ThreadLocalRandom.current().nextFloat(),noiseFrequency/size,noiseMagnitude );
-        chunks=generator.generateTerrainChunksLinear(linearScalarField,size,chunkSize);
+        linearScalarField= comGen.generateScalar(radius, ThreadLocalRandom.current().nextFloat(),noiseFrequency/size,noiseMagnitude );
+        chunks=generator.generateTerrainChunks(linearScalarField,size,chunkSize);
     }
 
     public void setFloat(int x, int y, int z, float val){

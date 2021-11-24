@@ -28,13 +28,13 @@ public class ComputeGeneration {
         GL46.glBindBuffer(GL46.GL_SHADER_STORAGE_BUFFER,0);
     }
 
-    public float[] generate(float radius,float seed, float noiseFrequency, float noiseMagnitude){
+    public float[] generateScalar(float radius, float seed, float noiseFrequency, float noiseMagnitude){
         float[] data = new float[size * size * size];
         GL46.glBindBufferBase(GL46.GL_SHADER_STORAGE_BUFFER, 0, scalarBufferId);
         scalarComputeProgram.useProgram();
 
         scalarComputeProgram.setUniform("radius", radius);
-        scalarComputeProgram.setUniform("seed", 0.423f);
+        scalarComputeProgram.setUniform("seed", seed);
         scalarComputeProgram.setUniform("noiseFrequency", noiseFrequency);
         scalarComputeProgram.setUniform("noiseMagnitude", noiseMagnitude);
 

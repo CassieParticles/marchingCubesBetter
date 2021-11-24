@@ -32,7 +32,7 @@ void main(){
 	for(int i=0;i<9;i++){
 		col+=texture(screenTexture, outTextCoords + offsets[i]).xyz*kernel[i];
 	}
-//	col=texture(screenTexture, outTextCoords).xyz;
+	col=texture(screenTexture, outTextCoords).xyz;
 	FragColour=vec4(col,1);
 //	FragColour=texture(screenTexture,outTextCoords);
 }
