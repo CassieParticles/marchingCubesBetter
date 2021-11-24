@@ -34,7 +34,7 @@ public class ComputeGeneration {
         scalarComputeProgram.useProgram();
 
         scalarComputeProgram.setUniform("radius", radius);
-        scalarComputeProgram.setUniform("seed", seed);
+        scalarComputeProgram.setUniform("seed", 0.423f);
         scalarComputeProgram.setUniform("noiseFrequency", noiseFrequency);
         scalarComputeProgram.setUniform("noiseMagnitude", noiseMagnitude);
 
