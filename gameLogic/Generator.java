@@ -11,6 +11,8 @@ import rendering.TerrainChunk;
 import java.nio.FloatBuffer;
 import java.util.Arrays;
 
+import static org.joml.Math.signum;
+
 public class Generator {
     private final TriangulationTable triangulationTable;
     private final PerlinNoise noise;
@@ -49,27 +51,15 @@ public class Generator {
     }
 
     private Vector3f interpolateXEdge(Vector3f aPos, Vector3f bPos, float a, float b){
-        if(aPos.x<bPos.x){
-            return new Vector3f(aPos.x+normalise(a,b,0),aPos.y,aPos.z);
-        }else{
-            return new Vector3f(aPos.x-normalise(a,b,0),aPos.y,aPos.z);
-        }
+        return new Vector3f(aPos.x+normalise(a,b,0)*signum(bPos.x-aPos.x),aPos.y,aPos.z);
     }
 
     private Vector3f interpolateYEdge(Vector3f aPos, Vector3f bPos, float a, float b){
-        if(aPos.y<bPos.y){
-            return new Vector3f(aPos.x,aPos.y+normalise(a,b,0),aPos.z);
-        }else{
-            return new Vector3f(aPos.x,aPos.y-normalise(a,b,0),aPos.z);
-        }
+        return new Vector3f(aPos.x,aPos.y+normalise(a,b,0)*signum(bPos.y-aPos.y),aPos.z);
     }
 
     private Vector3f interpolateZEdge(Vector3f aPos, Vector3f bPos, float a, float b){
-        if(aPos.z<bPos.z){
-            return new Vector3f(aPos.x,aPos.y,aPos.z+normalise(a,b,0));
-        }else{
-            return new Vector3f(aPos.x,aPos.y,aPos.z-normalise(a,b,0));
-        }
+        return new Vector3f(aPos.x,aPos.y,aPos.z+normalise(a,b,0)*signum(bPos.z-aPos.z));
     }
 
     public Mesh calcMesh(float[] scalarField, Vector3i offset, int chunkSize, int size){
